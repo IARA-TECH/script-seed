@@ -31,6 +31,20 @@ def execute_query(query: str, ok_message: str, error_message: str, vars: tuple =
         conn.close()
         sys.exit(1)
 
+print(colored(
+    r"""
+     ____                _ 
+    / ___|  ___  ___  __| |
+    \___ \ / _ \/ _ \/ _` |
+     ___) |  __/  __/ (_| |
+    |____/ \___|\___|\__,_|  
+    """,
+    "blue"
+))
+print(colored('='*32, 'cyan'))
+print(colored('🚀 Seed Script Execution Started','cyan'))
+print(colored('='*32, 'cyan'))
+
 # Creating access types
 query = """
     INSERT INTO Access_Type (name, description)
