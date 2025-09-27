@@ -149,7 +149,6 @@ for _ in range(3):
 
             if i == 0:
                 user_id_who_paid = user_id
-            # Creating user account role
 
         if user_id_who_paid:
             paid_at = datetime.now()
