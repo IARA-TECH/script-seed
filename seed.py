@@ -1,6 +1,6 @@
 import random
 import re
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, time, date
 import unicodedata
 
 import bcrypt
@@ -8,10 +8,12 @@ from faker import Faker
 from termcolor import colored
 
 from sql_statements import SqlStatements
+from mongo_statements import MongoStatements
 
 fake = Faker("pt_BR")
 fake.email()
 sql_statements = SqlStatements()
+mongo_statements = MongoStatements()
 
 def print_success_message(message: str, results: any = None) -> None:
     print(colored(message, "green"))
@@ -72,6 +74,25 @@ print_success_message("Payment methods created", payment_methods)
 
 # Creating the subscription
 subscription_id = sql_statements.create_subscription("Mar Profundo", fake.text(200), 1610.00, 1)
+
+# Creating shifts
+shifts = {
+    "Matutino": mongo_statements.create_shift(
+        "Matutino",
+        starts_at="07:00",
+        ends_at="12:00",
+    ),
+    "Vespertino": mongo_statements.create_shift(
+        "Vespertino",
+        starts_at="12:00",
+        ends_at="18:00",
+    ),
+    "Noturno": mongo_statements.create_shift(
+        "Noturno",
+        starts_at="18:00",
+        ends_at="23:59",
+    ),
+}
 
 for _ in range(3):
     factory_domain = fake.unique.domain_name()
@@ -149,6 +170,13 @@ for _ in range(3):
 
             if i == 0:
                 user_id_who_paid = user_id
+            
+            if i == 1:
+                user_id_who_requests = user_id
+            
+            if i == 2:
+                user_id_who_validates = user_id
+                
 
         if user_id_who_paid:
             paid_at = datetime.now()
@@ -170,4 +198,43 @@ for _ in range(3):
             )
             print_success_message(f"Payment for factory {factory_id} created", payment_id)
 
+    abacus_columns = [{"color":fake.color(), "value":1}, {"color":fake.color(), "value":10}, {"color":fake.color(), "value":100}]
+    abacus_lines = [fake.unique.word(), fake.unique.word(), fake.unique.word()]
+    abacus_id = mongo_statements.create_abacus(factory_id, fake.text(20), fake.text(100), abacus_lines, abacus_columns)
+
+    abacus_photos = []
+    for i in range(random.randint(2, 3)):
+        if i == 0:
+            shift = shifts["Matutino"]
+            print(shift)
+            taken_at = datetime.combine(
+                date.today(),
+                time(hour=random.randint(7, 11), minute=random.randint(0, 59))
+            )
+        elif i == 1:
+            shift = shifts["Vespertino"]
+            print(shift)
+            taken_at = datetime.combine(
+                date.today(),
+                time(hour=random.randint(12, 18), minute=random.randint(0, 59))
+            )
+        else:
+            shift = shifts["Noturno"]
+            print(shift)
+            taken_at = datetime.combine(
+                date.today(),
+                time(hour=random.randint(19, 23), minute=random.randint(0, 59))
+            )
+
+
+        values = [
+            [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)],
+            [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)],
+            [random.randint(0, 10), random.randint(0, 10), random.randint(0, 10)]
+        ]
+        abacus_photos.append(mongo_statements.create_abacus_photo(factory_id, shift['_id'], abacus_id, abacus_id, abacus_columns, user_id_who_requests, taken_at, fake.image_url(), user_id_who_validates, values, shift['name'], shift['starts_at'], shift['ends_at']))
+    
+    sheet = mongo_statements.create_sheet(factory_id, shift['_id'], abacus_photos, datetime.today(), shift['name'], shift['starts_at'], shift['ends_at'])
+
 sql_statements.close_connection()
+mongo_statements.close_connection()
