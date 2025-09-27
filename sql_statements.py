@@ -16,21 +16,21 @@ class FetchEnum(Enum):
 class SqlStatements:
     def __init__(self):
         self.__conn = psycopg2.connect(
-            host=os.getenv('DB_HOST'), 
-            database=os.getenv('DB_DATABASE'), 
-            user=os.getenv('DB_USER'), 
-            password=os.getenv('DB_PASSWORD'), 
-            port=os.getenv("DB_PORT")
+            host=os.getenv('POSTGRES_DB_HOST'), 
+            database=os.getenv('POSTGRES_DB_DATABASE'), 
+            user=os.getenv('POSTGRES_DB_USER'), 
+            password=os.getenv('POSTGRES_DB_PASSWORD'), 
+            port=os.getenv("POSTGRES_DB_PORT")
         )
 
     def open_connection(self) -> any:
         if self.__conn.closed == 0:
             self.__conn = psycopg2.connect(
-                host=os.getenv('DB_HOST'), 
-                database=os.getenv('DB_DATABASE'), 
-                user=os.getenv('DB_USER'), 
-                password=os.getenv('DB_PASSWORD'), 
-                port=os.getenv("DB_PORT")
+                host=os.getenv('POSTGRES_DB_HOST'), 
+                database=os.getenv('POSTGRES_DB_DATABASE'), 
+                user=os.getenv('POSTGRES_DB_USER'), 
+                password=os.getenv('POSTGRES_DB_PASSWORD'), 
+                port=os.getenv("POSTGRES_DB_PORT")
             )
             return self.__conn
         else:
