@@ -137,20 +137,6 @@ class SqlStatements:
         address = self.__execute_statement(query=query, error_message="Error while creating address", vars=vars, fetch=FetchEnum.FETCH_ONE)
         return address[0]
 
-    # def create_role(self, name:str, factory_id:int) -> int:
-    #     query = """
-    #         INSERT INTO Role (name, factory_id)
-    #         VALUES
-    #         (
-    #         %s,
-    #         %s
-    #         )
-    #         RETURNING pk_id
-    #     """
-    #     vars = (name, factory_id)
-    #     role = self.__execute_statement(query=query, error_message="Error while creating address", vars=vars, fetch=FetchEnum.FETCH_ONE)
-    #     return role[0]
-
     def create_user_account_access_type(self, user_account_uuid: int, access_type_id:int) -> None:
         query = """
             INSERT INTO User_Account_Access_Type (user_account_uuid, access_type_id)
