@@ -40,7 +40,7 @@ class MongoStatements:
     def create_abacus_photo(self, factory_id: int, shift_id: ObjectId, abacus_id: ObjectId, lines:list, columns: list, taken_by: str, taken_at: datetime, url_blob:str, validated_by:str, values:list, shift_name:str, shift_starts_at:datetime, shift_ends_at:datetime) -> int:
         photo = {
             "factory_id": factory_id,
-            "shift_id": {
+            "shift": {
                 "_id": shift_id,
                 "name": shift_name,
                 "starts_at": shift_starts_at,
