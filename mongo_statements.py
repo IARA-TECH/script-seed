@@ -4,12 +4,17 @@ from datetime import datetime
 from termcolor import colored
 import random
 from faker import Faker
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 fake = Faker("pt_BR")
 
 class MongoStatements:
-    def __init__(self, mongo_uri="mongodb://localhost:27017/", db_name="my_database"):
-        client = MongoClient(mongo_uri)
+    def __init__(self, mongo_url=os.getenv('MONGO_URL'), db_name="iara"):
+        client = MongoClient(mongo_url)
+        self.__client = client
         db = client[db_name]
         self.__shifts = db["shifts"]
         self.__abacuses = db["abacuses"]
@@ -74,4 +79,4 @@ class MongoStatements:
         return result.inserted_id
 
     def close_connection(self):
-        self.client.close()
+        self.__client.close()

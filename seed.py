@@ -150,7 +150,7 @@ for _ in range(3):
                 user_gender_id = genders["Outro"]
 
             user_email = create_email(user_name, factory_domain)
-            user_password = hash_password(fake.password())
+            user_password = hash_password(fake.password(length=10))
 
             # Creating user accounts
             user_id = sql_statements.create_user_account(
