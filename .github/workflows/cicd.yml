@@ -64,7 +64,7 @@ jobs:
           POSTGRES_URL: postgresql://testuser:testpass@localhost:5432/testdb
         run: |
           echo "Running script seed.py..."
-          python script-seed/seed.py
+          python script-seed\seed.py
 
       - name: Pipeline finished successfully
         run: echo "Everything ran correctly!"
