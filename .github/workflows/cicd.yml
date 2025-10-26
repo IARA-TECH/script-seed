@@ -51,12 +51,27 @@ jobs:
           pip install flake8 black psycopg2-binary pymongo
 
       - name: Check formatting and indentation
-        continue-on-error: true
         run: |
           echo "Checking style with flake8..."
-          flake8 --max-line-length=120 . || true
+          flake8 --max-line-length=120 .
           echo "Formatting code with black (check mode)..."
-          black --check . || true
+          black --check .
+
+      - name: Wait for MongoDB to be ready
+        run: |
+          echo "Waiting for MongoDB to start..."
+          until mongosh --eval "db.runCommand({ ping: 1 })" > /dev/null 2>&1; do
+            sleep 2
+          done
+          echo "MongoDB is ready!"
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to start..."
+          until pg_isready -U testuser -d testdb; do
+            sleep 2
+          done
+          echo "PostgreSQL is ready!"
 
       - name: Run main script
         env:
@@ -67,4 +82,4 @@ jobs:
           python seed.py
 
       - name: Pipeline finished successfully
-        run: echo "Everything ran correctly!"
+        run: echo "All steps completed successfully!"
